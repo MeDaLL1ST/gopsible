@@ -1,0 +1,32 @@
+settings:
+  fail_fast: true
+
+vars:
+  app_version: "v1.0"
+  remote_dir: "/opt/myapp"
+
+hosts:
+  - address: "192.168.1.10:22"
+    user: "root"
+    key_path: "/Users/username/.ssh/id_rsa"
+
+tasks:
+  - name: "Создать папку назначения"
+    type: "script"
+    script: "mkdir -p {{ .remote_dir }}"
+
+  - name: "Загрузить конфиг"
+    type: "upload"
+    src: "./configs/app.conf"       
+    dest: "{{ .remote_dir }}/app.conf" 
+    mode: "0644"                    
+
+  - name: "Загрузить бинарник"
+    type: "upload"
+    src: "./bin/myapp"
+    dest: "{{ .remote_dir }}/myapp"
+    mode: "0755"                   
+
+  - name: "Запустить приложение"
+    type: "script"
+    script: "{{ .remote_dir }}/myapp start"
